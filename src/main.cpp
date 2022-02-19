@@ -1,20 +1,36 @@
 #include <Arduino.h>
 
-bool ledState = false;
+// PWM setup
+const int pwmPin = 5;
+const int pwmFrequency = 5000;
+const int pwmChannel = 0;
+const int pwmResolution = 8;
 
-// Toggles a LED, used for onboard led here
-// bool& is a reference, which allows the parameter variable
-// to be altered by the function outside of the function
-void toggleLed(bool &state, int pin)
+void pwmFade(int channel)
 {
-  state = !state;                     // Invert LED state tracking value
-  digitalWrite(pin, (state == HIGH)); // Write new value to LED
+  // Fade in
+  for (int dutyCycle = 0; dutyCycle < 255; dutyCycle++)
+  {
+    // Changing the LED brightness with PWM
+    ledcWrite(channel, dutyCycle);
+    delay(15);
+  }
+  // Fade out
+  for (int dutyCycle = 255; dutyCycle > 0; dutyCycle--)
+  {
+    // Changing the LED brightness with PWM
+    ledcWrite(channel, dutyCycle);
+    delay(15);
+  }
 }
 
 void setup()
 {
   // put your setup code here, to run once:
-  pinMode(LED_BUILTIN, OUTPUT);
+
+  // PWM setup
+  ledcSetup(pwmChannel, pwmFrequency, pwmResolution);
+  ledcAttachPin(pwmPin, pwmChannel);
 
   Serial.begin(9600);
   Serial.println("Serial initiated at 9600 baud.");
@@ -22,7 +38,6 @@ void setup()
 
 void loop()
 {
-  // put your main code here, to run repeatedly:
-  toggleLed(ledState, LED_BUILTIN);
-  delay(500);
+  // put your main code here, to run repeatedly
+  pwmFade(pwmChannel);
 }

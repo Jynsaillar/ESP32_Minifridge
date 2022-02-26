@@ -165,18 +165,9 @@ void trackMeasurements(std::deque<float> &container, const float &value, int siz
   removeOldestMeasurement(container, sizeLimit);
 }
 
-char *dequeToString(const std::deque<float> input)
+std::string dequeToString(const std::deque<float> input)
 {
-  int size = static_cast<int>(input.size());
-
-  char buffer[size * 8]; // 3 digits, a dot, 2 digits, a comma, space = 8 chars per float value in the container, multiplied by the number of elements in the container
-
-  for (auto &element : input)
-  {
-    dtostrf(element, /*width*/ 5, /*decimal digit precision*/ 2, buffer);
-  }
-
-  return buffer;
+  return std::string(input.begin(), input.end());
 }
 
 void trendAnalysis(const std::deque<float> temperatures, const std::deque<float> humidities, int sizeLimit, int &numRecentMeasurements)
@@ -202,7 +193,7 @@ void trendAnalysis(const std::deque<float> temperatures, const std::deque<float>
   }
 
   Serial.println(temperatureTrend);
-  Serial.println(dequeToString(temperatures));
+  Serial.println(dequeToString(temperatures).c_str());
 
   if (humidityTrend < 0.0f)  {
     Serial.print("Humidity is falling, trend = ");
@@ -215,7 +206,7 @@ void trendAnalysis(const std::deque<float> temperatures, const std::deque<float>
   }
 
   Serial.println(humidityTrend);
-  Serial.println(dequeToString(humidities));
+  Serial.println(dequeToString(humidities).c_str());
 
   numRecentMeasurements = 0;
 }
